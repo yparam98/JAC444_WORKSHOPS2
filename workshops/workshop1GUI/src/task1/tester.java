@@ -3,6 +3,7 @@ package task1;
 import javafx.application.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -12,28 +13,42 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.concurrent.Flow;
 
 public class tester extends Application
 {
     public boolean isValid = false;
 
+    public void init() throws Exception
+    {
+        super.init();
+    }
+
     public void start(Stage stage) throws Exception
     {
-        FlowPane root = new FlowPane(10,10);
+        GridPane root = new GridPane();
+
+        root.setMinSize(400, 200);
+        root.setPadding(new Insets(10, 10, 10, 10));
+        root.setVgap(10);
+        root.setHgap(10);
         root.setAlignment(Pos.CENTER);
+
         Scene myScene = new Scene(root, 300, 300);
 
-        HBox prompt = new HBox();
-        Text ccNumPrompt = new Text("Please enter credit card number: ");
+        Text ccNumPrompt = new Text("Credit Card Number ");
         TextField ccNumInput = new TextField();
         ccNumInput.setPrefColumnCount(20);
-        prompt.getChildren().addAll(ccNumPrompt,ccNumInput);
+
+
 
         Button submit = new Button("Submit!");
 
@@ -41,24 +56,33 @@ public class tester extends Application
 
         submit.setOnAction(actionEvent -> {
             output.getChildren().clear();
-            isValid = validatorFunctions.isValid(Long.parseLong(ccNumInput.getCharacters().toString()));
-            if (isValid)
+            try{
+                isValid = validatorFunctions.isValid(Long.parseLong(ccNumInput.getCharacters().toString()));
+                if (isValid)
+                {
+                    Image cardtype = new Image("/task1/"+validatorFunctions.cardType+".png");
+                    ImageView myImage = new ImageView(cardtype);
+                    myImage.setFitHeight(100);
+                    myImage.setFitWidth(100);
+                    myImage.setPreserveRatio(true);
+                    output.getChildren().addAll(new Text("Card number is VALID\t"),myImage);
+                }
+                else
+                {
+                    output.getChildren().addAll(new Text("Card number is INVALID\t"));
+                }
+            } catch (NumberFormatException err)
             {
-                System.out.println("card type => "+validatorFunctions.cardType);
-                Image cardtype = new Image("/task1/"+validatorFunctions.cardType+".png");
-                ImageView myImage = new ImageView(cardtype);
-                myImage.setFitHeight(100);
-                myImage.setFitWidth(100);
-                myImage.setPreserveRatio(true);
-                output.getChildren().addAll(new Text("Card number is VALID\t"),myImage);
-            }
-            else
-            {
-                output.getChildren().addAll(new Text("Card number is INVALID\t"));
+                Text error = new Text("You have not entered a credit card number!");
+                error.setFill(Color.RED);
+                output.getChildren().addAll(new Text("You have not entered a credit card number!"));
             }
         });
 
-        root.getChildren().addAll(prompt, submit, output);
+        root.add(ccNumPrompt,0,0);
+        root.add(ccNumInput,1,0);
+        root.add(submit,1,1);
+        root.add(output,2,2);
 
         stage.setScene(myScene);
         stage.setTitle("Credit Card Validator");
@@ -67,7 +91,6 @@ public class tester extends Application
 
     public static void main(String[] args)
     {
-        System.out.println("initialized...");
         Application.launch(args);
     }
 }

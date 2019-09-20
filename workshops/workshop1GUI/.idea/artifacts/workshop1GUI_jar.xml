@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="workshop1GUI:jar">
+  <artifact type="jar" build-on-make="true" name="workshop1GUI:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/workshop1GUI_jar</output-path>
     <root id="archive" name="workshop1GUI.jar">
       <element id="module-output" name="workshop1GUI" />
